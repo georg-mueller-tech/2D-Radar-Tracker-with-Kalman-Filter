@@ -1,4 +1,4 @@
-# 2D Radar Tracker with Kalman-Filter
+# 2D Radar Tracker with Kalman Filter
 Small MATLAB project where I track a single target in 2D with a Kalman filter. A simulated radar at the origin measures range and bearing once per second, with noise. The filter estimates position and velocity from those measurements.
 
 I wrote it to understand how state estimation works in practice after seeing the theory in Regelungstechnik (Control Engineering).
@@ -10,11 +10,12 @@ I wrote it to understand how state estimation works in practice after seeing the
 - runs a linear Kalman filter with a constant velocity model
 - compares the position error of the raw measurements and the filter estimate (RMSE)
 
-In my runs the filter roughly halves the position error compared to the raw measurements. During the turn the error goes up for a few seconds, because the constant velocity model does not expect a turn.
+With q = 50 the filter reduces the RMSE from 47.4 m (raw measurements) to 34.5 m, about 27 % less. During the turns the error goes up for a few seconds, because the constant velocity model does not expect a turn.
 
 ## Files
 
 | file | content |
+|---|---|
 | `main.m` | settings, filter setup, plots |
 | `simulate_target.m` | true target path |
 | `radar_measurement.m` | noisy range/bearing measurement and its covariance in x/y |
@@ -42,5 +43,5 @@ Small q makes the filter lag behind in the turns. The error drops until q ≈ 50
 
 ## Things I want to try next
 - EKF that uses range and bearing directly instead of converting to x/y
-- an IMM filter (constant velocity + turn model) so the error during the turn stays low
+- an IMM filter (constant velocity + turn model) so the error during the turns stays low
 - more than one target, which needs data association
