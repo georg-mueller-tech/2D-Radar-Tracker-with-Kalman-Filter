@@ -5,7 +5,7 @@ I wrote it to understand how state estimation works in practice after seeing the
 
 ## What it does
 
-- simulates a target flying straight, then a 20 s turn at 3 deg/s, then straight again
+- simulates a target at about 100 m/s with two turns
 - generates noisy radar measurements (25 m range noise, 0.4 deg bearing noise) and converts them to x/y
 - runs a linear Kalman filter with a constant velocity model
 - compares the position error of the raw measurements and the filter estimate (RMSE)
