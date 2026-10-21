@@ -14,7 +14,7 @@ radar_pos = [0; 0];           % radar at the origin
 
 sigma_r     = 25;             % range noise [m]
 sigma_theta = deg2rad(0.4);   % bearing noise [rad]
-q = 20;                        % process noise, acceleration variance [m^2/s^4]
+q = 50;                        % process noise, acceleration variance [m^2/s^4]
 
 %% truth and measurements
 X = simulate_target(N, dt);
@@ -76,3 +76,26 @@ xlabel('time [s]'); ylabel('position error [m]');
 legend('measurement', 'Kalman filter');
 title('Position error');
 saveas(gcf, 'results/error.png');
+
+%% q sweep
+q_list = [0.1 0.5 1 2 5 10 20 50 100 200 500 1000];
+rmse = zeros(size(q_list));
+
+for i = 1:numel(q_list)
+    Qi = q_list(i) * (G*G');
+    x = [Z(:,2); (Z(:,2) - Z(:,1))/dt];
+    P = blkdiag(Rk(:,:,2), 2*Rk(:,:,2)/dt^2);
+    e = zeros(1, N-2);
+    for k = 3:N
+        [x, P] = kalman_step(x, P, Z(:,k), Rk(:,:,k), F, Qi, H);
+        e(k-2) = norm(x(1:2) - X(1:2,k));
+    end
+    rmse(i) = sqrt(mean(e.^2));
+end
+
+figure;
+semilogx(q_list, rmse, 'o-', 'LineWidth', 1.2);
+grid on;
+xlabel('q [m^2/s^4]'); ylabel('RMSE [m]');
+title('Filter error vs. process noise q');
+saveas(gcf, 'results/q_sweep.png');
