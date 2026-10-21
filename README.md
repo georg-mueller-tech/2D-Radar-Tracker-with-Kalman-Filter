@@ -24,6 +24,22 @@ In my runs the filter roughly halves the position error compared to the raw meas
 
 Open the folder in MATLAB and run `main.m`. No toolboxes needed. The plots are saved to `results/`.
 
+## Results
+
+Tracking with q = 50 m²/s⁴:
+
+   ![track](results/track.png)
+
+Position error over time:
+
+   ![error](results/error.png)
+
+ Filter error for different values of q:
+
+   ![q sweep](results/q_sweep.png)
+
+Small q makes the filter lag behind in the turns. The error drops until q ≈ 50 m²/s⁴, which matches the turn acceleration of the target (v·ω ≈ 7 m/s², squared ≈ 49). Larger q does not help further because the filter starts following the measurement noise.
+
 ## Things I want to try next
 - EKF that uses range and bearing directly instead of converting to x/y
 - an IMM filter (constant velocity + turn model) so the error during the turn stays low
