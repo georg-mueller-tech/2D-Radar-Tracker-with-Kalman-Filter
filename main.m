@@ -15,31 +15,29 @@ radar_pos = [0; 0];           % radar at the origin
 sigma_r     = 25;             % range noise [m]
 sigma_theta = deg2rad(0.4);   % bearing noise [rad]
 q = 50;                        % process noise, acceleration variance [m^2/s^4]
+d = 2; 
 
 %% truth and measurements
 X = simulate_target(N, dt);
 
-Z  = zeros(2, N);
-Rk = zeros(2, 2, N);
+Z  = zeros(d, N);
+Rk = zeros(d, d, N);
 for k = 1:N
     [Z(:,k), Rk(:,:,k)] = radar_measurement(X(1:2,k), radar_pos, sigma_r, sigma_theta);
 end
 
 %% Kalman filter
-F = [1 0 dt 0;
-     0 1 0 dt;
-     0 0 1  0;
-     0 0 0  1];
-G = [dt^2/2 0; 0 dt^2/2; dt 0; 0 dt];
+I = eye(d); O = zeros(d);
+F = [I dt*I; O I];
+G = [dt^2/2*I; dt*I];
 Q = q * (G*G');
-H = [1 0 0 0;
-     0 1 0 0];
+H = [I O];
 
 % two-point init: position from scan 2, velocity from the difference
 x = [Z(:,2); (Z(:,2) - Z(:,1))/dt];
 P = blkdiag(Rk(:,:,2), 2*Rk(:,:,2)/dt^2);
 
-Xest = nan(4, N);
+Xest = nan(2*d, N);
 Xest(:,2) = x;
 for k = 3:N
     [x, P] = kalman_step(x, P, Z(:,k), Rk(:,:,k), F, Q, H);
@@ -48,8 +46,8 @@ end
 
 %% results
 idx = 3:N;
-err_meas = vecnorm(Z(:,idx) - X(1:2,idx));
-err_kf   = vecnorm(Xest(1:2,idx) - X(1:2,idx));
+err_meas = vecnorm(Z(:,idx) - X(1:d,idx));
+err_kf   = vecnorm(Xest(1:d,idx) - X(1:d,idx));
 
 fprintf('RMSE raw measurements: %6.1f m\n', sqrt(mean(err_meas.^2)));
 fprintf('RMSE Kalman filter:    %6.1f m\n', sqrt(mean(err_kf.^2)));
@@ -88,7 +86,7 @@ for i = 1:numel(q_list)
     e = zeros(1, N-2);
     for k = 3:N
         [x, P] = kalman_step(x, P, Z(:,k), Rk(:,:,k), F, Qi, H);
-        e(k-2) = norm(x(1:2) - X(1:2,k));
+        e(k-2) = norm(x(1:d) - X(1:d,k));
     end
     rmse(i) = sqrt(mean(e.^2));
 end
