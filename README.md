@@ -10,7 +10,7 @@ I wrote it to understand how state estimation works in practice after seeing the
 - runs a linear Kalman filter with a constant velocity model
 - compares the position error of the raw measurements and the filter estimate (RMSE)
 
-With q = 50 the filter reduces the RMSE from 47.4 m (raw measurements) to 34.5 m, about 27 % less. During the turns the error goes up for a few seconds, because the constant velocity model does not expect a turn.
+With q = 50 the filter reduces the RMSE from 48.2 m (raw measurements) to 34.9 m, about 28 % less. During the turns the error goes up for a few seconds, because the constant velocity model does not expect a turn.
 
 ## Files
 

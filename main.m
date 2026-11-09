@@ -65,7 +65,7 @@ axis equal; grid on;
 xlabel('x [m]'); ylabel('y [m]');
 legend('true path', 'radar measurements', 'Kalman estimate', 'radar', 'Location', 'best');
 title('2D target tracking');
-saveas(gcf, 'results/track.png');
+ax = gca; ax.Toolbar.Visible = 'off'; drawnow; exportgraphics(gcf, 'results/track.png');
 
 figure;
 t = idx*dt;
@@ -75,7 +75,7 @@ grid on;
 xlabel('time [s]'); ylabel('position error [m]');
 legend('measurement', 'Kalman filter');
 title('Position error');
-saveas(gcf, 'results/error.png');
+ax = gca; ax.Toolbar.Visible = 'off'; drawnow; exportgraphics(gcf, 'results/error.png');
 
 %% q sweep
 q_list = [0.1 0.5 1 2 5 10 20 50 100 200 500 1000];
@@ -98,4 +98,4 @@ semilogx(q_list, rmse, 'o-', 'LineWidth', 1.2);
 grid on;
 xlabel('q [m^2/s^4]'); ylabel('RMSE [m]');
 title('Filter error vs. process noise q');
-saveas(gcf, 'results/q_sweep.png');
+ax = gca; ax.Toolbar.Visible = 'off'; drawnow; exportgraphics(gcf, 'results/q_sweep.png');
